@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, type Ref, type ComputedRef } from 'vue'
+import { ref, computed, onMounted, watch, isRef, type Ref, type ComputedRef } from 'vue'
 
 interface BaseUseApiOptions<T> {
   immediate?: boolean
@@ -42,7 +42,7 @@ export interface PaginationControls<T> {
 export type PaginatedApiResponse<T> = BaseApiResponse<T> & PaginationControls<T>
 
 export const useApi = <T>(
-  url: string,
+  url: string | Ref<string> | (() => string),
   options: UseApiOptions<T> = {}
 ): PaginatedApiResponse<T> => {
   const {
@@ -71,11 +71,18 @@ export const useApi = <T>(
   const hasNext = computed(() => page.value < totalPages.value)
   const hasPrev = computed(() => page.value > 1)
 
+  const getBaseUrl = (): string => {
+    if (typeof url === 'function') return url()
+    if (isRef(url)) return url.value
+    return url
+  }
+
   const buildUrl = (): string => {
-    if (!pagination) return url
+    const base = getBaseUrl()
+    if (!pagination) return base
     const skip = (page.value - 1) * perPage.value
-    const delimiter = url.includes('?') ? '&' : '?'
-    return `${url}${delimiter}limit=${perPage.value}&skip=${skip}`
+    const delimiter = base.includes('?') ? '&' : '?'
+    return `${base}${delimiter}limit=${perPage.value}&skip=${skip}`
   }
 
   const execute = async (): Promise<T | null> => {
@@ -124,6 +131,18 @@ export const useApi = <T>(
 
   const prevPage = async (): Promise<T | null> => {
     return hasPrev.value ? setPage(page.value - 1) : null
+  }
+
+  if (typeof url === 'function' || isRef(url)) {
+    watch(
+      typeof url === 'function' ? url : () => (url as Ref<string>).value,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          page.value = 1
+          execute()
+        }
+      }
+    )
   }
 
   if (immediate) {

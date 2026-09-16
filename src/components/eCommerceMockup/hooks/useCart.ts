@@ -4,7 +4,9 @@ export interface CartProduct {
   id: string | number;
   title: string;
   price: number;
+  thumbnail?: string;
   image?: string;
+  category?: string;
 }
 
 export interface CartItem extends CartProduct {
@@ -32,6 +34,17 @@ export const useCart = () => {
     }
   };
 
+  const updateQuantity = (id: string | number, delta: number) => {
+    const item = cart.value.find((i) => i.id === id);
+    if (!item) return;
+    const newQty = item.quantity + delta;
+    if (newQty <= 0) {
+      removeFromCart(id);
+    } else {
+      item.quantity = newQty;
+    }
+  };
+
   const removeFromCart = (id: string | number) => {
     const idx = cart.value.findIndex((item) => item.id === id);
     if (idx > -1) cart.value.splice(idx, 1);
@@ -46,6 +59,7 @@ export const useCart = () => {
     totalCount,
     totalPrice,
     addToCart,
+    updateQuantity,
     removeFromCart,
     clearCart,
   };

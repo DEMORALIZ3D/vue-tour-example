@@ -12,8 +12,10 @@ const currentYear = new Date().getFullYear();
 
 <template>
     <MeshBG>
-        <header>
-            <Logo />
+        <header id="app-header" data-tour="header">
+            <div id="brand-logo" data-tour="brand-logo">
+                <Logo />
+            </div>
             <div>
                 <Navigation />
                 <CartPopover />
@@ -22,14 +24,15 @@ const currentYear = new Date().getFullYear();
         <main>
             <slot />
         </main>
-    <footer>
-        <div>
-            <span>&copy;</span>
-            Aaron JS DEV
-        </div>
-        <div>
-            {{ currentYear }}
-        </div>
-    </footer>
-        </MeshBG>
+        <footer id="app-footer" data-tour="footer">
+            <div>
+                <span>&copy;</span>
+                <strong>Aaron JS DEV</strong>
+                <span>• Vue Demo Project</span>
+            </div>
+            <div>
+                {{ currentYear }}
+            </div>
+        </footer>
+    </MeshBG>
 </template>

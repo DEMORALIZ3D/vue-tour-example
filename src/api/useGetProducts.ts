@@ -1,14 +1,21 @@
-import { computed } from 'vue';
+import { computed, type Ref, type ComputedRef } from 'vue';
 import { useApi } from './useApi'
 
 export interface Product {
     id: number;
     title: string;
+    description: string;
     price: number;
+    discountPercentage?: number;
+    rating?: number;
+    stock?: number;
+    brand?: string;
+    category: string;
+    thumbnail: string;
+    images?: string[];
 }
 
 export type Products = Product[]
-
 
 export interface ProductsResponse {
     products: Products;
@@ -17,8 +24,25 @@ export interface ProductsResponse {
     limit: number;
 }
 
+export interface UseGetProductsOptions {
+    searchQuery?: Ref<string> | ComputedRef<string>;
+    category?: Ref<string | null> | ComputedRef<string | null>;
+    perPage?: number;
+}
 
-export const useGetProducts = () => {
+export const useGetProducts = (options: UseGetProductsOptions = {}) => {
+    const endpoint = computed(() => {
+        const query = options.searchQuery?.value?.trim()
+        if (query) {
+            return `https://dummyjson.com/products/search?q=${encodeURIComponent(query)}`
+        }
+        const cat = options.category?.value?.trim()
+        if (cat) {
+            return `https://dummyjson.com/products/category/${encodeURIComponent(cat)}`
+        }
+        return 'https://dummyjson.com/products'
+    })
+
     const {
         data,
         isLoading: productsIsLoading,
@@ -31,17 +55,19 @@ export const useGetProducts = () => {
         hasNext: productsHasNext,
         hasPrev: productsHasPrev,
         nextPage: productsNextPage,
-        prevPage: productsPrevPage
-    } = useApi<ProductsResponse | null>('https://dummyjson.com/products', {
+        prevPage: productsPrevPage,
+        setPage: productsSetPage
+    } = useApi<ProductsResponse | null>(endpoint, {
         initialData: null,
         immediate: true,
         pagination: true,
+        perPage: options.perPage ?? 9
     })
 
     const products = computed(() => data.value?.products ?? [])
 
     return {
-        products: products,
+        products,
         productsIsLoading,
         productsHasError,
         fetchProducts,
@@ -52,6 +78,7 @@ export const useGetProducts = () => {
         productsHasNext,
         productsHasPrev,
         productsNextPage,
-        productsPrevPage
+        productsPrevPage,
+        productsSetPage
     }
 }

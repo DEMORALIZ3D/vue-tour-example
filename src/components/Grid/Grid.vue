@@ -64,7 +64,7 @@ const visibleItems = computed(() => {
   return props.items.slice(startIndex, endIndex).map((item, offset) => ({
     data: item,
     index: startIndex + offset,
-    key: (item[props.keyField] as string | number) ?? (startIndex + offset)
+    key: ((item as Record<string, any>)[props.keyField as string] as string | number) ?? (startIndex + offset)
   }))
 })
 
@@ -156,7 +156,7 @@ watch(
       </div>
     </div>
 
-    <footer :class="styles['pagination-bar']">
+    <footer :class="styles['pagination-bar']" id="pagination-controls" data-tour="pagination">
       <slot
         name="pagination"
         :page="page"
@@ -173,6 +173,7 @@ watch(
             type="button"
             :disabled="!hasPrev || isLoading"
             :class="styles['nav-btn']"
+            data-tour="pagination-prev"
             @click="emit('prev')"
           >
             &larr; Previous
@@ -181,6 +182,7 @@ watch(
             type="button"
             :disabled="!hasNext || isLoading"
             :class="styles['nav-btn']"
+            data-tour="pagination-next"
             @click="emit('next')"
           >
             Next &rarr;
