@@ -1,0 +1,99 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing);
+        padding-right: var(--spacing);
+    }
+
+    &>div>nav {
+        padding: 0 var(--spacing);
+
+        &>ul {
+            list-style: none;
+            align-items: center;
+
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing)
+        }
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+
+
+.products {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex-grow: 1;
+    background: pink;
+
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: calc(var(--spacing) * 2);
+}
+
+
+.search-root {
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    border-radius: calc(var(--spacing) / 2);
+    border: none;
+    height: 100%;
+    padding: calc(var(--spacing) / 2) var(--spacing);
+}
+
+.filter-options {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.filter-pop-cta {
+    anchor-name: --filter-pop-cta;
+    border: none;
+    padding: var(--spacing);
+    border-radius: 100px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-pop {
+    position: absolute;
+    position-anchor: --filter-pop-cta;
+    position-area: bottom left;
+    position-visibility: no-overflow;
+
+    margin: 0;
+    inset: auto;
+}
+
+.product-area {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    box-sizing: border-box;
+    padding: var(--spacing);
+}

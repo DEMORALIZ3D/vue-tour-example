@@ -1,0 +1,71 @@
+.mesh-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #ffffff;
+  isolation: isolate; /* 1. Establishes a local stacking context */
+}
+
+.mesh-container::before,
+.mesh-container::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.8;
+  pointer-events: none;
+  will-change: transform;
+  z-index: -1; /* 2. Sinks behind slot content, but stays in front of #ffffff */
+}
+
+/* Base slate, mist, and soft steel blues */
+.mesh-container::before {
+  background: 
+    radial-gradient(circle at 25% 25%, #e2e8f0 0%, transparent 55%),
+    radial-gradient(circle at 75% 65%, #93c5fd 0%, transparent 50%),
+    radial-gradient(circle at 45% 85%, #cbd5e1 0%, transparent 45%);
+  animation: mesh-float-1 20s ease-in-out infinite alternate;
+}
+
+/* Accent ice blue and muted blue-gray */
+.mesh-container::after {
+  background: 
+    radial-gradient(circle at 80% 20%, #bfdbfe 0%, transparent 45%),
+    radial-gradient(circle at 20% 75%, #94a3b8 0%, transparent 40%),
+    radial-gradient(circle at 60% 35%, #e0f2fe 0%, transparent 50%);
+  animation: mesh-float-2 26s ease-in-out infinite alternate;
+}
+
+.mesh-content {
+      min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes mesh-float-1 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -8%, 0) rotate(40deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-7%, 6%, 0) rotate(85deg) scale(0.96);
+  }
+}
+
+@keyframes mesh-float-2 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05);
+  }
+  50% {
+    transform: translate3d(-8%, 9%, 0) rotate(-50deg) scale(0.92);
+  }
+  100% {
+    transform: translate3d(7%, -5%, 0) rotate(-110deg) scale(1.12);
+  }
+}
