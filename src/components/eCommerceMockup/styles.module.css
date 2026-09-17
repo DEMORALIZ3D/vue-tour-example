@@ -358,3 +358,44 @@ footer {
         transform: rotate(360deg);
     }
 }
+
+@media (max-width: 640px) {
+    header {
+        padding: 10px 14px;
+
+        & > div {
+            gap: 8px;
+        }
+
+        & > div > nav > ul > li:not(:first-child) {
+            display: none;
+        }
+    }
+
+    main {
+        padding: 12px 8px;
+    }
+
+    .filter-bar {
+        padding: 8px 12px;
+    }
+
+    .filter-pop {
+        width: calc(100vw - 20px);
+        left: 10px !important;
+        right: 10px !important;
+    }
+
+    .active-filters-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    footer {
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 14px;
+        text-align: center;
+    }
+}

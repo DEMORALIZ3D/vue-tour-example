@@ -112,6 +112,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px solid #f1f5f9;
@@ -120,26 +121,32 @@
 .price-block {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .price {
   font-size: 1.05rem;
   font-weight: 700;
   color: #0f172a;
+  white-space: nowrap;
 }
 
 .action {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
-  font-size: 0.75rem;
+  padding: 8px 14px;
+  font-size: 0.8rem;
   font-weight: 600;
   background: #0f172a;
   color: #ffffff;
   border: 1px solid transparent;
   border-radius: 8px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 38px;
   transition: all 0.2s ease;
 }
 
@@ -157,4 +164,34 @@
 .action.in-cart:hover {
   background: #d1fae5;
   color: #047857;
+}
+
+@media (max-width: 540px) {
+  .body {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .price-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .action {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    min-height: 42px;
+  }
 }

@@ -178,3 +178,12 @@
   background: #1e293b;
   transform: translateY(-1px);
 }
+
+@media (max-width: 640px) {
+  .popover {
+    width: calc(100vw - 24px);
+    max-width: 340px;
+    padding: 14px;
+    gap: 10px;
+  }
+}

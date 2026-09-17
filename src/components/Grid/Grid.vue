@@ -41,26 +41,44 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const scrollTop = ref(0)
 const viewportHeight = ref(0)
 
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+const onResize = () => {
+  windowWidth.value = window.innerWidth
+}
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', onResize, { passive: true })
+}
+
+const effectiveColumns = computed(() => {
+  if (windowWidth.value < 640) return 1
+  if (windowWidth.value < 960) return Math.min(props.columns, 2)
+  return props.columns
+})
+
+const effectiveRowHeight = computed(() => {
+  if (effectiveColumns.value === 1) return 370
+  return props.rowHeight
+})
+
 // Virtualization Math
-const totalRows = computed(() => Math.ceil(props.items.length / props.columns))
+const totalRows = computed(() => Math.ceil(props.items.length / effectiveColumns.value))
 const totalContentHeight = computed(() => {
   if (totalRows.value === 0) return 0
-  // total row heights plus gaps plus top/bottom padding (16px * 2)
-  return totalRows.value * props.rowHeight + 32
+  return totalRows.value * effectiveRowHeight.value + 32
 })
 
 const startRow = computed(() => {
-  return Math.max(0, Math.floor(scrollTop.value / props.rowHeight) - props.overscanRows)
+  return Math.max(0, Math.floor(scrollTop.value / effectiveRowHeight.value) - props.overscanRows)
 })
 
 const endRow = computed(() => {
-  const visibleCount = Math.ceil((viewportHeight.value || 600) / props.rowHeight)
+  const visibleCount = Math.ceil((viewportHeight.value || 600) / effectiveRowHeight.value)
   return Math.min(totalRows.value, startRow.value + visibleCount + props.overscanRows * 2)
 })
 
 const visibleItems = computed(() => {
-  const startIndex = startRow.value * props.columns
-  const endIndex = endRow.value * props.columns
+  const startIndex = startRow.value * effectiveColumns.value
+  const endIndex = endRow.value * effectiveColumns.value
   return props.items.slice(startIndex, endIndex).map((item, offset) => ({
     data: item,
     index: startIndex + offset,
@@ -68,8 +86,8 @@ const visibleItems = computed(() => {
   }))
 })
 
-// Translate accounts for rowHeight directly
-const translateY = computed(() => startRow.value * props.rowHeight)
+// Translate accounts for effectiveRowHeight directly
+const translateY = computed(() => startRow.value * effectiveRowHeight.value)
 
 const onScroll = (event: Event) => {
   const target = event.currentTarget as HTMLDivElement
@@ -98,6 +116,9 @@ watch(
 
 onUnmounted(() => {
   resizeObserver?.disconnect()
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', onResize)
+  }
 })
 
 watch(
@@ -141,14 +162,14 @@ watch(
           :class="styles['virtual-grid']"
           :style="{
             transform: `translate3d(0, ${translateY}px, 0)`,
-            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${effectiveColumns}, minmax(0, 1fr))`,
             gap: `${gap}px`
           }"
         >
           <div
             v-for="entry in visibleItems"
             :key="entry.key"
-            :style="{ height: `${rowHeight - gap}px` }"
+            :style="{ height: `${effectiveRowHeight - gap}px` }"
           >
             <slot name="item" :item="entry.data" :index="entry.index" />
           </div>
